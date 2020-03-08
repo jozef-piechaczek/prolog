@@ -1,0 +1,1 @@
+primes(LO, HI, N)   :- between(LO, HI, N), (N >= 2, X is N div 2, \+ (between(2, X, Y), ((N mod Y) =:= 0))).
