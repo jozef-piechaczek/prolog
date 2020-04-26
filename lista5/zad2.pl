@@ -34,30 +34,58 @@ get_color(F, C) :-
     (((even(I), odd(J)); (odd(I), even(J))) -> C = black; C = white).
 
 
-idx_hetman(X, LH, N) :-
+get_color(I, J, C) :-
+    (((even(I), odd(J)); (odd(I), even(J))) -> C = black; C = white).
+
+new_hetman([], [], 0).
+new_hetman(X, LH, N) :-
     N1 is N - 1,
     numlist(0, N1, LN),
-    idx_hetman(LN, LH, X, N).
+    new_hetman(LN, LH, X, N).
 
-idx_hetman([], [], [], _).
-idx_hetman([HN|TN], [HH|TH], [HR|TR], N) :-
-    idx_hetman(TN, TH, TR, N),
+new_hetman([], [], [], _).
+new_hetman([HN|TN], [HH|TH], [HR|TR], N) :-
+    new_hetman(TN, TH, TR, N),
     ch_indexing2(HR, HN, HH, N).
 
-board(N) :-
+board(Hetman) :-
+    length(Hetman, N),
+    new_hetman(NewHetman, Hetman, N),
     (N1 is N - 1),
     numlist(0, N1, L),
-    draw(L, N1).
+    draw_line(N1),
+    draw(L, N1, NewHetman).
 
-draw([], N) :-
-    draw_line(N).
+% Draw board
+draw([], _, _).
 
-draw([H|T], N) :-
-    write(H),
-    draw(T, N).
+draw([H|T], N, NewHetman) :-
+    draw_row(H, N, NewHetman),
+    draw_row(H, N, NewHetman),
+    draw_line(N),
+    draw(T, N, NewHetman).
 
+% Draw row of chess board
+draw_row(I, N, Hetman) :-
+    numlist(0, N, L),
+    draw_row(L, I, N, Hetman).
+
+draw_row([], _, _, _) :-
+    write("|\n").
+
+draw_row([J|T], I, N, Hetman) :-
+    N1 is N + 1,
+    ch_indexing2(El, I, J, N1),
+    get_color(I, J, Color),
+    ((Color = black) ->
+        (member(El, Hetman) -> write("|:###:"); write("|:::::"));
+        (member(El, Hetman) -> write("| ### "); write("|     "))
+    ),
+    draw_row(T, I, N, Hetman).
+
+% Draw line of chess board
 draw_line(N) :-
-    numlist(1, N, L),
+    numlist(0, N, L),
     draw_line2(L).
 
 draw_line2([]) :-
