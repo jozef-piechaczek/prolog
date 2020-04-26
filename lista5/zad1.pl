@@ -3,8 +3,8 @@ scanner(Stream, Tokens) :-
     atom_codes(String, Codes),
     phrase(lexer(Tokens), Codes).
 
-lexer([]) --> [].
-lexer(Tokens) --> whitespace, lexer(Tokens).
+lexer([])           --> [].
+lexer(Tokens)       --> whitespace, lexer(Tokens).
 lexer([Token|Tail]) --> token(Token), lexer(Tail).
 
 whitespace --> [W], !, {char_type(W, space)}.
@@ -16,9 +16,6 @@ token(id(X))    --> id(X2), !, {atom_chars(X, X2)}.
 token(sep(X))   --> sep(X), !.
 
 % Lexical rules
-
-% ex1(X)      -->  [X], {member(X, ["read"])}.
-% key(X)      --> [X], {member(X, [`write`, "write", write])}.
 
 key(write)      --> "write".
 key(while)      --> "while".
